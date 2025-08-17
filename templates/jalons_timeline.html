@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% block title %}Timeline des Jalons{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1"><i class="bi bi-timeline text-primary"></i> Timeline des Jalons</h2>
+        {% if binome %}
+        <p class="text-muted mb-0">
+            <i class="bi bi-people me-1"></i>
+            Binôme : <strong>{{ binome.mentor.get_full_name|default:binome.mentor.username }}</strong>
+            & <strong>{{ binome.mentore.get_full_name|default:binome.mentore.username }}</strong>
+        </p>
+        <p class="text-muted small">Programme : {{ binome.programme.nom }}</p>
+        {% endif %}
+    </div>
+    <div>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-modern">
+            <i class="bi bi-arrow-left me-1"></i>Retour au dashboard
+        </a>
+    </div>
+</div>
+
+{% if jalons_binome %}
+<!-- Statistiques rapides -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-list-task fs-1 mb-2"></i>
+                <h4>{{ jalons_binome|length }}</h4>
+                <small>Total Jalons</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle fs-1 mb-2"></i>
+                <h4>{% for jb in jalons_binome %}{% if jb.statut == 'DONE' %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</h4>
+                <small>Complétés</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-clock fs-1 mb-2"></i>
+                <h4>{% for jb in jalons_binome %}{% if jb.statut == 'WAIT' %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</h4>
+                <small>En attente</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="bi bi-hourglass fs-1 mb-2"></i>
+                <h4>{% for jb in jalons_binome %}{% if jb.statut == 'TODO' %}{{ forloop.counter0|add:1 }}{% endif %}{% empty %}0{% endfor %}</h4>
+                <small>À faire</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Timeline des jalons -->
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Progression des Jalons</h5>
+    </div>
+    <div class="card-body">
+        <div class="timeline">
+            {% for jb in jalons_binome %}
+            <div class="timeline-item {% if jb.statut == 'DONE' %}completed{% elif jb.statut == 'WAIT' %}pending{% endif %} mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-2">
+                                    <h5 class="mb-0 me-3">{{ jb.jalon.titre }}</h5>
+                                    {% if jb.statut == 'TODO' %}
+                                        <span class="status-badge bg-secondary text-white">
+                                            <i class="bi bi-hourglass me-1"></i>{{ jb.get_statut_display }}
+                                        </span>
+                                    {% elif jb.statut == 'WAIT' %}
+                                        <span class="status-badge bg-warning text-dark">
+                                            <i class="bi bi-clock me-1"></i>{{ jb.get_statut_display }}
+                                        </span>
+                                    {% elif jb.statut == 'DONE' %}
+                                        <span class="status-badge bg-success text-white">
+                                            <i class="bi bi-check-circle me-1"></i>{{ jb.get_statut_display }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <p class="text-muted mb-2">{{ jb.jalon.description }}</p>
+
+                                <div class="d-flex align-items-center text-muted small mb-2">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    <span class="me-3">Échéance : {{ jb.jalon.date_echeance|date:"d/m/Y" }}</span>
+
+                                    {% if jb.date_realisation %}
+                                    <i class="bi bi-check-square me-1"></i>
+                                    <span class="me-3">Réalisé : {{ jb.date_realisation|date:"d/m/Y H:i" }}</span>
+                                    {% endif %}
+
+                                    {% if jb.date_validation %}
+                                    <i class="bi bi-award me-1"></i>
+                                    <span>Validé : {{ jb.date_validation|date:"d/m/Y H:i" }}</span>
+                                    {% endif %}
+                                </div>
+
+                                {% if jb.commentaire %}
+                                <div class="alert alert-info py-2 mb-0">
+                                    <i class="bi bi-chat-left-text me-1"></i>
+                                    <strong>Commentaire :</strong> {{ jb.commentaire }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4 text-end">
+                                {% if user.role == 'MENTEE' and jb.statut == 'TODO' %}
+                                    <button type="button" class="btn btn-success btn-modern" data-bs-toggle="modal" data-bs-target="#modal-realise-{{ jb.id }}">
+                                        <i class="bi bi-check-circle me-1"></i>Marquer comme réalisé
+                                    </button>
+                                {% elif user.role == 'MENTOR' and jb.statut == 'WAIT' %}
+                                    <button type="button" class="btn btn-primary btn-modern" data-bs-toggle="modal" data-bs-target="#modal-valide-{{ jb.id }}">
+                                        <i class="bi bi-award me-1"></i>Valider le jalon
+                                    </button>
+                                {% elif jb.statut == 'DONE' %}
+                                    <div class="text-success">
+                                        <i class="bi bi-check-circle-fill fs-3"></i>
+                                        <div class="small">Terminé</div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Modals pour les actions -->
+{% for jb in jalons_binome %}
+    {% if user.role == 'MENTEE' and jb.statut == 'TODO' %}
+    <!-- Modal Marquer comme réalisé -->
+    <div class="modal fade" id="modal-realise-{{ jb.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-check-circle me-2"></i>Marquer le jalon comme réalisé
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" action="{% url 'jalon_realise' jb.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Vous êtes sur le point de marquer le jalon <strong>"{{ jb.jalon.titre }}"</strong> comme réalisé.
+                        </div>
+                        <div class="mb-3">
+                            <label for="commentaire-{{ jb.id }}" class="form-label">
+                                <i class="bi bi-chat-left-text me-1"></i>Commentaire sur votre réalisation *
+                            </label>
+                            <textarea name="commentaire" id="commentaire-{{ jb.id }}" class="form-control" rows="4"
+                                      placeholder="Décrivez ce que vous avez accompli pour ce jalon..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Marquer comme réalisé
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if user.role == 'MENTOR' and jb.statut == 'WAIT' %}
+    <!-- Modal Valider -->
+    <div class="modal fade" id="modal-valide-{{ jb.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-award me-2"></i>Valider le jalon
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" action="{% url 'jalon_valide' jb.id %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Vous êtes sur le point de valider le jalon <strong>"{{ jb.jalon.titre }}"</strong>.
+                        </div>
+                        {% if jb.commentaire %}
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6><i class="bi bi-chat-left-text me-1"></i>Commentaire du mentoré :</h6>
+                                <p class="mb-0">{{ jb.commentaire }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-award me-1"></i>Valider le jalon
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+    <h4 class="text-muted mt-3">Aucun jalon à afficher</h4>
+    <p class="text-muted">Il n'y a actuellement aucun jalon assigné à votre binôme.</p>
+    <a href="{% url 'dashboard' %}" class="btn btn-primary btn-modern">
+        <i class="bi bi-arrow-left me-1"></i>Retour au dashboard
+    </a>
+</div>
+{% endif %}
+{% endblock %}

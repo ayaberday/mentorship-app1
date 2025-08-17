@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des Programmes{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 2rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="book-open" style="width: 1.25rem; height: 1.25rem; color: white;"></i>
+                </div>
+                Gestion des Programmes
+            </h2>
+            <p style="color: var(--muted-foreground); margin: 0;">Créez et gérez les programmes de mentoring</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">
+                <i data-lucide="arrow-left" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                Retour
+            </a>
+            <button class="btn btn-primary">
+                <i data-lucide="plus" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                Nouveau programme
+            </button>
+        </div>
+    </div>
+
+    {% if programmes %}
+    <div style="display: grid; gap: 1.5rem;">
+        {% for programme in programmes %}
+        <div class="card" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <h4 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">{{ programme.nom }}</h4>
+                    <p style="color: var(--muted-foreground); margin-bottom: 1rem;">{{ programme.description }}</p>
+                    <div style="display: flex; gap: 1.5rem; font-size: 0.875rem; color: var(--muted-foreground);">
+                        <span style="display: flex; align-items: center; gap: 0.25rem;">
+                            <i data-lucide="calendar" style="width: 1rem; height: 1rem;"></i>
+                            {{ programme.date_debut|date:"d/m/Y" }} - {{ programme.date_fin|date:"d/m/Y" }}
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 0.25rem;">
+                            <i data-lucide="users" style="width: 1rem; height: 1rem;"></i>
+                            {{ programme.binomes_count }} binôme{{ programme.binomes_count|pluralize }}
+                        </span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-outline" style="font-size: 0.875rem;">
+                        <i data-lucide="edit" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                        Modifier
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <div style="width: 4rem; height: 4rem; background: var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--muted-foreground);">
+            <i data-lucide="book-open" style="width: 2rem; height: 2rem;"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">Aucun programme</h3>
+        <p style="color: var(--muted-foreground);">Créez votre premier programme de mentoring.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

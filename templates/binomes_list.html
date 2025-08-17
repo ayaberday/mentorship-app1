@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Gestion des Binômes{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 2rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="users" style="width: 1.25rem; height: 1.25rem; color: white;"></i>
+                </div>
+                Gestion des Binômes
+            </h2>
+            <p style="color: var(--muted-foreground); margin: 0;">Gérez les binômes mentor-mentoré</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline">
+                <i data-lucide="arrow-left" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                Retour
+            </a>
+            <button class="btn btn-primary">
+                <i data-lucide="plus" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                Nouveau binôme
+            </button>
+        </div>
+    </div>
+
+    {% if binomes %}
+    <div style="display: grid; gap: 1.5rem;">
+        {% for binome in binomes %}
+        <div class="card" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 1.5rem; flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
+                            {{ binome.mentor.first_name.0|default:binome.mentor.username.0|upper }}
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin: 0; font-size: 0.875rem;">{{ binome.mentor.get_full_name|default:binome.mentor.username }}</p>
+                            <p style="color: var(--muted-foreground); margin: 0; font-size: 0.75rem;">Mentor</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--muted-foreground);">
+                        <i data-lucide="arrow-right" style="width: 1rem; height: 1rem;"></i>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="width: 2.5rem; height: 2.5rem; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;">
+                            {{ binome.mentore.first_name.0|default:binome.mentore.username.0|upper }}
+                        </div>
+                        <div>
+                            <p style="font-weight: 600; margin: 0; font-size: 0.875rem;">{{ binome.mentore.get_full_name|default:binome.mentore.username }}</p>
+                            <p style="color: var(--muted-foreground); margin: 0; font-size: 0.75rem;">Mentoré</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-left: auto;">
+                        <p style="font-size: 0.875rem; color: var(--muted-foreground); margin: 0;">{{ binome.programme.nom }}</p>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-outline" style="font-size: 0.875rem;">
+                        <i data-lucide="eye" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
+                        Voir détails
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 3rem;">
+        <div style="width: 4rem; height: 4rem; background: var(--muted); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: var(--muted-foreground);">
+            <i data-lucide="users" style="width: 2rem; height: 2rem;"></i>
+        </div>
+        <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">Aucun binôme</h3>
+        <p style="color: var(--muted-foreground);">Créez votre premier binôme mentor-mentoré.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

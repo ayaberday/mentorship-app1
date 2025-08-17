@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MentorApp{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Modern navigation with consistent styling -->
+    {% if user.is_authenticated %}
+    <nav class="nav-modern">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="nav-logo">
+                <div class="nav-logo-icon">
+                    <i data-lucide="users" style="width: 1.25rem; height: 1.25rem; color: white;"></i>
+                </div>
+                <span class="nav-logo-text">MentorApp</span>
+            </a>
+
+            <div class="nav-user">
+                <div class="nav-user-info">
+                    <div class="nav-avatar">
+                        {{ user.first_name.0|default:user.username.0|upper }}
+                    </div>
+                    <div class="nav-user-details">
+                        <p class="nav-user-name">{{ user.get_full_name|default:user.username }}</p>
+                        <p class="nav-user-role">{{ user.get_role_display }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'logout' %}" class="nav-logout">
+                    <i data-lucide="log-out" style="width: 1.25rem; height: 1.25rem;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div style="max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem;">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-error{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

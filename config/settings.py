@@ -3,12 +3,26 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 
+# --- Configuration Email (SMTP) ---
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'votre_email@gmail.com')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'votre_mot_de_passe')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # charger .env en local
 load_dotenv()
 
-# --- Sécurité / Debug ---
+# --- Base de données PostgreSQL Render ---
+DATABASES = {
+    'default': dj_database_url.parse(
+        os.getenv('DATABASE_URL', 'postgresql://mentorship_app_postgres_user:KWU6HERIsXJLQoNPkVuSVt7OJgJ5LU8x@dpg-d2etlamr433s738gg790-a.oregon-postgres.render.com/mentorship_app_postgres')
+    )
+}
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-insecure-key-change-me")
@@ -20,6 +34,7 @@ def _split_env(name):
 ALLOWED_HOSTS = _split_env("ALLOWED_HOSTS") or ["127.0.0.1", "localhost"]
 CSRF_TRUSTED_ORIGINS = _split_env("CSRF_TRUSTED_ORIGINS")
 
+
 # --- Applications ---
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -28,7 +43,29 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
 ]
+
+# --- Templates ---
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+AUTH_USER_MODEL = 'accounts.User'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGIN_URL = '/login/'
 
 # --- Middleware (WhiteNoise) ---
 MIDDLEWARE = [
@@ -43,22 +80,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # si tu veux des templates globaux
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
@@ -81,6 +102,11 @@ else:
 # --- Static (WhiteNoise) ---
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',  # Dossier static à la racine du projet
+]
+
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"

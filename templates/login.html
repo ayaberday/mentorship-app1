@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Connexion - MentorApp{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                <i data-lucide="log-in" style="width: 32px; height: 32px; color: white;"></i>
+            </div>
+            <h2>Connexion</h2>
+            <p>Accédez à votre espace de mentoring</p>
+        </div>
+
+        {% if form.errors %}
+            <div class="alert alert-error">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                <input type="text" name="username" class="form-input" id="id_username" placeholder="Votre nom d'utilisateur" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password" class="form-label">Mot de passe</label>
+                <input type="password" name="password" class="form-input" id="id_password" placeholder="Votre mot de passe" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Se connecter
+            </button>
+        </form>
+        
+        <div class="auth-link">
+            <p>Pas encore de compte ? <a href="{% url 'signup' %}">Créez-en un</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}
