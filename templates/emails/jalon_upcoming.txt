@@ -1,0 +1,18 @@
+Rappel : Jalon à venir
+
+Bonjour {{ mentore_name }},
+
+Ce message vous rappelle qu'un jalon arrive bientôt à échéance :
+
+Jalon : {{ jalon_titre }}
+Programme : {{ programme }}
+Description : {{ jalon_description }}
+Date d'échéance : {{ date_echeance|date:"d/m/Y" }}
+Dans {{ days_diff }} jour(s)
+
+N'hésitez pas à contacter votre mentor {{ mentor_name }} si vous avez besoin d'aide.
+
+Lien : {{ site_url }}/jalons/
+
+Cordialement,
+L'équipe Mentorship App

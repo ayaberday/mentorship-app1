@@ -2,71 +2,441 @@
 {% block title %}Dashboard Super Admin{% endblock %}
 
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem;">
-    <!-- Modern Super Admin header -->
-    <div style="margin-bottom: 2rem;">
-        <h2 style="font-size: 2rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <i data-lucide="shield-check" style="width: 1.25rem; height: 1.25rem; color: white;"></i>
+<div class="container-fluid mt-4">
+    <!-- Header avec informations utilisateur -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-shield-alt text-primary me-2"></i>
+                        Dashboard Super Administrateur
+                    </h2>
+                    <p class="text-muted mb-0">Supervision complète de la plateforme de mentorship</p>
+                </div>
+                <div class="text-end">
+                    <small class="text-muted">Dernière mise à jour: {{ "now"|date:"d/m/Y H:i" }}</small>
+                </div>
             </div>
-            Tableau de bord Super Administrateur
-        </h2>
-        <p style="color: var(--muted-foreground); margin: 0;">Gérez l'ensemble de la plateforme et supervisez toutes les activités</p>
+        </div>
     </div>
 
-    <!-- Modern Super Admin action cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
-        <div class="card" style="padding: 2rem; border-left: 4px solid var(--primary);">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div style="width: 4rem; height: 4rem; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i data-lucide="users" style="width: 2rem; height: 2rem;"></i>
-                </div>
-                <div style="flex: 1;">
-                    <h5 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">Gestion RH</h5>
-                    <p style="color: var(--muted-foreground); margin-bottom: 1rem;">Créer, modifier et supprimer les comptes RH</p>
-                    <a href="{% url 'manage_rh' %}" class="btn btn-primary">
-                        <i data-lucide="user-plus" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
-                        Gérer les RH
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card" style="padding: 2rem; border-left: 4px solid var(--accent);">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div style="width: 4rem; height: 4rem; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i data-lucide="bar-chart-3" style="width: 2rem; height: 2rem;"></i>
-                </div>
-                <div style="flex: 1;">
-                    <h5 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">Statistiques Globales</h5>
-                    <p style="color: var(--muted-foreground); margin-bottom: 1rem;">Visualiser l'état des programmes et des binômes</p>
-                    <a href="{% url 'global_stats' %}" class="btn" style="background: var(--accent); color: white;">
-                        <i data-lucide="trending-up" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
-                        Voir les stats
-                    </a>
+    <!-- Métriques principales -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-gradient rounded-circle p-3">
+                                <i class="fas fa-users text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-1">{{ total_users }}</h3>
+                            <p class="text-muted mb-0">Utilisateurs totaux</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="card" style="padding: 2rem; border-left: 4px solid var(--secondary);">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div style="width: 4rem; height: 4rem; background: var(--secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
-                    <i data-lucide="settings" style="width: 2rem; height: 2rem;"></i>
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-gradient rounded-circle p-3">
+                                <i class="fas fa-project-diagram text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-1">{{ total_programmes }}</h3>
+                            <p class="text-muted mb-0">Programmes actifs</p>
+                            <small class="text-success">{{ active_programmes }} en cours</small>
+                        </div>
+                    </div>
                 </div>
-                <div style="flex: 1;">
-                    <h5 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);">Configuration</h5>
-                    <p style="color: var(--muted-foreground); margin-bottom: 1rem;">Accéder aux paramètres généraux et templates d'emails</p>
-                    <a href="#" class="btn btn-secondary">
-                        <i data-lucide="cog" style="width: 1rem; height: 1rem; margin-right: 0.5rem;"></i>
-                        Configurer
-                    </a>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-gradient rounded-circle p-3">
+                                <i class="fas fa-handshake text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-1">{{ total_binomes }}</h3>
+                            <p class="text-muted mb-0">Binômes formés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-gradient rounded-circle p-3">
+                                <i class="fas fa-tasks text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-1">{{ recent_jalons }}</h3>
+                            <p class="text-muted mb-0">Jalons ce mois</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Graphiques et statistiques avancées -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line text-primary me-2"></i>
+                        Répartition des utilisateurs
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="userDistributionChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-tie text-success me-2"></i>
+                        Gestionnaires RH
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="h4 mb-0">{{ total_rh }}</span>
+                        <a href="{% url 'manage_rh' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Gérer
+                        </a>
+                    </div>
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" style="width: {% widthratio total_rh 10 100 %}%"></div>
+                    </div>
+                    <small class="text-muted">Capacité recommandée: 10 RH</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides et gestion -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        Actions rapides
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <a href="{% url 'manage_rh' %}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-user-plus mb-2 d-block"></i>
+                                Créer compte RH
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'global_stats' %}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-chart-bar mb-2 d-block"></i>
+                                Statistiques détaillées
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-success w-100" onclick="exportData()">
+                                <i class="fas fa-download mb-2 d-block"></i>
+                                Exporter données
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-outline-warning w-100" onclick="sendReminders()">
+                                <i class="fas fa-bell mb-2 d-block"></i>
+                                Envoyer rappels
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                        Alertes système
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="systemAlerts">
+                        <!-- Les alertes seront chargées dynamiquement -->
+                        <div class="d-flex align-items-center text-muted">
+                            <i class="fas fa-spinner fa-spin me-2"></i>
+                            Chargement des alertes...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau de gestion des utilisateurs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-users-cog text-primary me-2"></i>
+                            Gestion des utilisateurs
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterUsers('all')">Tous</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterUsers('RH')">RH</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterUsers('MENTOR')">Mentors</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filterUsers('MENTEE')">Mentorés</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="usersTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Utilisateur</th>
+                                    <th>Rôle</th>
+                                    <th>Email</th>
+                                    <th>Dernière connexion</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les données seront chargées via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal pour actions utilisateur -->
+<div class="modal fade" id="userActionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Action utilisateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalContent">
+                    <!-- Contenu dynamique -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    lucide.createIcons();
+// Graphique de répartition des utilisateurs
+const ctx = document.getElementById('userDistributionChart').getContext('2d');
+const userChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Mentors', 'Mentorés', 'RH', 'Admins'],
+        datasets: [{
+            data: [
+                {{ user_distribution.mentors }},
+                {{ user_distribution.mentees }},
+                {{ user_distribution.rh }},
+                {{ user_distribution.admins }}
+            ],
+            backgroundColor: [
+                '#0d6efd',
+                '#198754',
+                '#ffc107',
+                '#dc3545'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Fonctions pour les actions
+function exportData() {
+    window.location.href = '/superadmin/export/';
+}
+
+function sendReminders() {
+    fetch('/superadmin/send-reminders/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': (document.querySelector('input[name=csrfmiddlewaretoken]') || {}).value || getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`${data.count} rappels envoyés avec succès`);
+        } else {
+            alert('Erreur lors de l\'envoi des rappels');
+        }
+    });
+}
+
+function filterUsers(role) {
+    // Implémentation du filtrage des utilisateurs
+    const rows = document.querySelectorAll('#usersTable tbody tr');
+    rows.forEach(row => {
+        const userRole = row.dataset.role;
+        if (role === 'all' || userRole === role) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Mettre à jour les boutons actifs
+    document.querySelectorAll('.btn-group button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+// Charger les alertes système
+function loadSystemAlerts() {
+    fetch('/superadmin/system-alerts/')
+    .then(response => response.json())
+    .then(data => {
+        const alertsContainer = document.getElementById('systemAlerts');
+        if (data.alerts.length === 0) {
+            alertsContainer.innerHTML = '<div class="text-success"><i class="fas fa-check-circle me-2"></i>Aucune alerte système</div>';
+        } else {
+            alertsContainer.innerHTML = data.alerts.map(alert => 
+                `<div class="alert alert-${alert.type} alert-dismissible fade show mb-2" role="alert">
+                    <i class="fas fa-${alert.icon} me-2"></i>
+                    <strong>${alert.title}</strong> ${alert.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`
+            ).join('');
+        }
+    });
+}
+
+// Charger les utilisateurs
+function loadUsers() {
+    fetch('/superadmin/users-data/')
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = data.users.map(user => 
+            `<tr data-role="${user.role}">
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-sm bg-${user.role === 'ADF' ? 'danger' : user.role === 'RH' ? 'warning' : user.role === 'MENTOR' ? 'primary' : 'success'} rounded-circle me-2 d-flex align-items-center justify-content-center text-white">
+                            ${user.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <div class="fw-bold">${user.full_name || user.username}</div>
+                            <small class="text-muted">@${user.username}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge bg-${user.role === 'ADF' ? 'danger' : user.role === 'RH' ? 'warning' : user.role === 'MENTOR' ? 'primary' : 'success'}">
+                        ${user.role_display}
+                    </span>
+                </td>
+                <td>${user.email}</td>
+                <td>
+                    <small class="text-muted">
+                        ${user.last_login ? new Date(user.last_login).toLocaleDateString('fr-FR') : 'Jamais'}
+                    </small>
+                </td>
+                <td>
+                    <span class="badge ${user.is_active ? 'bg-success' : 'bg-secondary'}">
+                        ${user.is_active ? 'Actif' : 'Inactif'}
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="editUser(${user.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-${user.is_active ? 'warning' : 'success'}" onclick="toggleUser(${user.id})">
+                            <i class="fas fa-${user.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`
+        ).join('');
+    });
+}
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    loadSystemAlerts();
+    loadUsers();
+    
+    // Inject CSRF if missing
+    if (!document.querySelector('input[name=csrfmiddlewaretoken]')) {
+        const form = document.createElement('form');
+        form.innerHTML = `<input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">`;
+        document.body.appendChild(form);
+    }
+
+    // Actualiser les données toutes les 5 minutes
+    setInterval(() => {
+        loadSystemAlerts();
+        loadUsers();
+    }, 300000);
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 {% endblock %}

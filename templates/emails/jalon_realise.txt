@@ -1,0 +1,20 @@
+Jalon réalisé par votre mentoré
+
+Bonjour {{ mentor_name }},
+
+Votre mentoré {{ mentore_name }} a marqué le jalon suivant comme réalisé :
+
+Jalon : {{ jalon_titre }}
+Programme : {{ programme }}
+Description : {{ jalon_description }}
+Date de réalisation : {{ date_realisation|date:"d/m/Y à H:i" }}
+
+{% if commentaire %}
+Commentaire du mentoré :
+{{ commentaire }}
+{% endif %}
+
+Veuillez vous connecter à la plateforme pour valider ce jalon.
+
+Cordialement,
+L'équipe Mentorship App

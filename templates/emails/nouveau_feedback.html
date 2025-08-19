@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Nouveau formulaire de feedback</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #007bff;">Nouveau formulaire de feedback disponible</h2>
+        
+        <p>Bonjour <strong>{{ user_name }}</strong>,</p>
+        
+        <p>Un nouveau formulaire de feedback est maintenant disponible pour vous :</p>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #007bff;">{{ form_titre }}</h3>
+            <p><strong>Programme :</strong> {{ programme }}</p>
+            {% if jalon %}
+            <p><strong>Jalon concerné :</strong> {{ jalon }}</p>
+            {% endif %}
+            {% if form_description %}
+            <p><strong>Description :</strong> {{ form_description }}</p>
+            {% endif %}
+        </div>
+        
+        <p>Votre feedback est important pour améliorer le programme de mentorship. Merci de prendre quelques minutes pour le remplir.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/jalons/feedback/{{ form_id }}/fill/" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Remplir le formulaire</a>
+        </div>
+        
+        <p style="color: #666; font-size: 14px;">
+            Cordialement,<br>
+            L'équipe Mentorship App
+        </p>
+    </div>
+</body>
+</html>
+

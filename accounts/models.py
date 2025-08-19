@@ -58,6 +58,7 @@ class Binome(models.Model):
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE, related_name='binomes')
     mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mentors', limit_choices_to={'role': 'MENTOR'})
     mentore = models.ForeignKey(User, on_delete=models.CASCADE, related_name='mentores', limit_choices_to={'role': 'MENTEE'})
+    date_creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.mentor.username} / {self.mentore.username} ({self.programme.nom})"
@@ -69,6 +70,9 @@ class FeedbackForm(models.Model):
     titre = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     date_creation = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_forms', limit_choices_to={'role': 'RH'}, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    allow_multiple_responses = models.BooleanField(default=False)
 
     def __str__(self):
         return self.titre
@@ -84,6 +88,11 @@ class FeedbackQuestion(models.Model):
     texte = models.CharField(max_length=255)
     type = models.CharField(max_length=10, choices=QUESTION_TYPES)
     choices = models.TextField(blank=True, help_text="Séparer les choix par une virgule pour le QCM")
+    ordre = models.PositiveIntegerField(default=1)
+    required = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['ordre']
 
     def __str__(self):
         return self.texte

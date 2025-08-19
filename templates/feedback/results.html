@@ -1,0 +1,14 @@
+from django.core.management.base import BaseCommand
+from utils.email_notifications import EmailNotificationService
+
+class Command(BaseCommand):
+    help = 'Envoie les rappels automatiques pour les jalons'
+    
+    def handle(self, *args, **options):
+        self.stdout.write('Envoi des rappels jalons...')
+        
+        notifications_sent = EmailNotificationService.send_jalon_reminder_notifications()
+        
+        self.stdout.write(
+            self.style.SUCCESS(f'Rappels envoyés: {notifications_sent}')
+        )

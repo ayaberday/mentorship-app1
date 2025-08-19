@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Jalon réalisé</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #2c5aa0;">Jalon réalisé par votre mentoré</h2>
+        
+        <p>Bonjour <strong>{{ mentor_name }}</strong>,</p>
+        
+        <p>Votre mentoré <strong>{{ mentore_name }}</strong> a marqué le jalon suivant comme réalisé :</p>
+        
+        <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #28a745;">{{ jalon_titre }}</h3>
+            <p><strong>Programme :</strong> {{ programme }}</p>
+            <p><strong>Description :</strong> {{ jalon_description }}</p>
+            <p><strong>Date de réalisation :</strong> {{ date_realisation|date:"d/m/Y à H:i" }}</p>
+            {% if commentaire %}
+            <p><strong>Commentaire du mentoré :</strong></p>
+            <p style="font-style: italic; background-color: #fff; padding: 10px; border-radius: 4px;">{{ commentaire }}</p>
+            {% endif %}
+        </div>
+        
+        <p>Veuillez vous connecter à la plateforme pour valider ce jalon.</p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ site_url }}/jalons/" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Valider le jalon</a>
+        </div>
+        
+        <p style="color: #666; font-size: 14px;">
+            Cordialement,<br>
+            L'équipe Mentorship App
+        </p>
+    </div>
+</body>
+</html>

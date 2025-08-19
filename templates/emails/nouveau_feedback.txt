@@ -1,0 +1,17 @@
+Nouveau formulaire de feedback disponible
+
+Bonjour {{ user_name }},
+
+Un nouveau formulaire de feedback est maintenant disponible pour vous :
+
+Formulaire : {{ form_titre }}
+Programme : {{ programme }}
+{% if jalon %}Jalon concerné : {{ jalon }}{% endif %}
+{% if form_description %}Description : {{ form_description }}{% endif %}
+
+Votre feedback est important pour améliorer le programme de mentorship. Merci de prendre quelques minutes pour le remplir.
+
+Lien : {{ site_url }}/jalons/feedback/{{ form_id }}/fill/
+
+Cordialement,
+L'équipe Mentorship App

@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}Export de données{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-download text-primary me-2"></i>
+                        Export de données
+                    </h2>
+                    <p class="text-muted mb-0">Exportez les données de la plateforme en CSV ou Excel</p>
+                </div>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog text-primary me-2"></i>
+                        Configuration de l'export
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="exportForm">
+                        {% csrf_token %}
+                        
+                        <!-- Format d'export -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Format d'export</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="export_type" id="csv" value="csv" checked>
+                                        <label class="form-check-label" for="csv">
+                                            <i class="fas fa-file-csv text-success me-2"></i>
+                                            <strong>CSV</strong>
+                                            <br><small class="text-muted">Compatible avec Excel, Google Sheets</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="export_type" id="excel" value="excel">
+                                        <label class="form-check-label" for="excel">
+                                            <i class="fas fa-file-excel text-success me-2"></i>
+                                            <strong>Excel</strong>
+                                            <br><small class="text-muted">Feuilles multiples, formatage avancé</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Types de données -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Données à exporter</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="data_types" value="users" id="users" checked>
+                                        <label class="form-check-label" for="users">
+                                            <i class="fas fa-users text-primary me-2"></i>
+                                            <strong>Utilisateurs</strong> ({{ total_users }})
+                                            <br><small class="text-muted">Comptes, rôles, activité</small>
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="data_types" value="programmes" id="programmes" checked>
+                                        <label class="form-check-label" for="programmes">
+                                            <i class="fas fa-project-diagram text-info me-2"></i>
+                                            <strong>Programmes</strong> ({{ total_programmes }})
+                                            <br><small class="text-muted">Détails et statistiques</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="data_types" value="binomes" id="binomes" checked>
+                                        <label class="form-check-label" for="binomes">
+                                            <i class="fas fa-handshake text-warning me-2"></i>
+                                            <strong>Binômes</strong> ({{ total_binomes }})
+                                            <br><small class="text-muted">Paires mentor/mentoré</small>
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="data_types" value="jalons" id="jalons" checked>
+                                        <label class="form-check-label" for="jalons">
+                                            <i class="fas fa-tasks text-success me-2"></i>
+                                            <strong>Jalons</strong> ({{ total_jalons }})
+                                            <br><small class="text-muted">Progression et validation</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="data_types" value="feedbacks" id="feedbacks">
+                                        <label class="form-check-label" for="feedbacks">
+                                            <i class="fas fa-comments text-purple me-2"></i>
+                                            <strong>Feedbacks</strong> ({{ total_feedbacks }})
+                                            <br><small class="text-muted">Réponses aux formulaires</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtres de date -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Filtres de date (optionnel)</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="date_from" class="form-label">Date de début</label>
+                                    <input type="date" class="form-control" name="date_from" id="date_from">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="date_to" class="form-label">Date de fin</label>
+                                    <input type="date" class="form-control" name="date_to" id="date_to">
+                                </div>
+                            </div>
+                            <small class="text-muted">Laissez vide pour exporter toutes les données</small>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="button" class="btn btn-outline-primary" onclick="selectAll()">
+                                    <i class="fas fa-check-square me-1"></i>Tout sélectionner
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="selectNone()">
+                                    <i class="fas fa-square me-1"></i>Tout désélectionner
+                                </button>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-download me-2"></i>Exporter les données
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Informations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-primary">Format CSV</h6>
+                        <ul class="list-unstyled small text-muted">
+                            <li><i class="fas fa-check text-success me-1"></i>Compatible avec Excel</li>
+                            <li><i class="fas fa-check text-success me-1"></i>Taille de fichier réduite</li>
+                            <li><i class="fas fa-check text-success me-1"></i>Encodage UTF-8</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="text-success">Format Excel</h6>
+                        <ul class="list-unstyled small text-muted">
+                            <li><i class="fas fa-check text-success me-1"></i>Feuilles séparées par type</li>
+                            <li><i class="fas fa-check text-success me-1"></i>Formatage et couleurs</li>
+                            <li><i class="fas fa-check text-success me-1"></i>Statistiques incluses</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <strong>Conseil :</strong> Utilisez Excel pour des analyses avancées avec graphiques et tableaux croisés dynamiques.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exports rapides -->
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-header bg-transparent border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        Exports rapides
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'admin_export_data' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-users me-1"></i>Export utilisateurs
+                        </a>
+                        <button class="btn btn-outline-info btn-sm" onclick="exportJalons()">
+                            <i class="fas fa-tasks me-1"></i>Export jalons
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" onclick="exportStats()">
+                            <i class="fas fa-chart-bar me-1"></i>Export statistiques
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectAll() {
+    document.querySelectorAll('input[name="data_types"]').forEach(checkbox => {
+        checkbox.checked = true;
+    });
+}
+
+function selectNone() {
+    document.querySelectorAll('input[name="data_types"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+
+function exportJalons() {
+    const form = document.getElementById('exportForm');
+    // Désélectionner tout
+    selectNone();
+    // Sélectionner seulement jalons
+    document.getElementById('jalons').checked = true;
+    form.submit();
+}
+
+function exportStats() {
+    window.location.href = '{% url "export_data" %}?quick=stats';
+}
+
+// Validation du formulaire
+document.getElementById('exportForm').addEventListener('submit', function(e) {
+    const checkedBoxes = document.querySelectorAll('input[name="data_types"]:checked');
+    if (checkedBoxes.length === 0) {
+        e.preventDefault();
+        alert('Veuillez sélectionner au moins un type de données à exporter.');
+        return false;
+    }
+    
+    // Afficher un indicateur de chargement
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Export en cours...';
+    submitBtn.disabled = true;
+    
+    // Réactiver le bouton après 10 secondes (au cas où)
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 10000);
+});
+</script>
+{% endblock %}

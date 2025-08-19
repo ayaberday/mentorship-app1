@@ -1,0 +1,15 @@
+Félicitations ! Jalon validé
+
+Bonjour {{ mentore_name }},
+
+Excellente nouvelle ! Votre mentor {{ mentor_name }} a validé votre jalon :
+
+Jalon : {{ jalon_titre }}
+Programme : {{ programme }}
+Description : {{ jalon_description }}
+Date de validation : {{ date_validation|date:"d/m/Y à H:i" }}
+
+Continuez sur cette lancée ! Vous pouvez consulter vos prochains jalons sur la plateforme.
+
+Cordialement,
+L'équipe Mentorship App
