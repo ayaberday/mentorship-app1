@@ -31,7 +31,7 @@ def _split_env(name):
     raw = os.getenv(name, "")
     return [x.strip() for x in raw.split(",") if x.strip()]
 
-ALLOWED_HOSTS = ["mentorship-app1.onrender.com"]
+ALLOWED_HOSTS = ["mentorship-app1.onrender.com", "localhost"]
 CSRF_TRUSTED_ORIGINS = ["https://mentorship-app1.onrender.com"]
 
 
