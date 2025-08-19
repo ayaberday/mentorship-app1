@@ -17,10 +17,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # charger .env en local
 load_dotenv()
 
-# --- Base de données PostgreSQL Render ---
+# --- Base de données ---
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', 'postgresql://mentorship_app_postgres_user:KWU6HERIsXJLQoNPkVuSVt7OJgJ5LU8x@dpg-d2etlamr433s738gg790-a.oregon-postgres.render.com/mentorship_app_postgres')
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
     )
 }
 DEBUG = os.getenv("DEBUG", "True") == "True"
@@ -31,8 +31,8 @@ def _split_env(name):
     raw = os.getenv(name, "")
     return [x.strip() for x in raw.split(",") if x.strip()]
 
-ALLOWED_HOSTS = _split_env("ALLOWED_HOSTS") or ["127.0.0.1", "localhost"]
-CSRF_TRUSTED_ORIGINS = _split_env("CSRF_TRUSTED_ORIGINS")
+ALLOWED_HOSTS = ["mentorship-app1.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://mentorship-app1.onrender.com"]
 
 
 # --- Applications ---
@@ -83,21 +83,7 @@ ROOT_URLCONF = 'config.urls'
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# --- Base de données (Postgres en prod, SQLite en local) ---
-if os.getenv("DATABASE_URL"):
-    DATABASES = {
-        "default": dj_database_url.config(
-            conn_max_age=600,
-            ssl_require=False  # Render gère le SSL en proxy
-        )
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+# (Optionnel) vous pouvez ajuster conn_max_age/ssl_require via les env vars si nécessaire
 
 # --- Static (WhiteNoise) ---
 STATIC_URL = '/static/'
